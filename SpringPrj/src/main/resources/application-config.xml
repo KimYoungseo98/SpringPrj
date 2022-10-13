@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+<!-- 첫 행에 엔터 또는 공백 불가능함 -->
+<!-- 빈(자바객체)생성을 정의. 빈의 의존성 설정 -->
+<!-- IHelloService helloService = new HelloService(); -->
+<!-- <bean id="helloService" class="com.kosa.myapp.HelloService"></bean>  -->	
+	
+<!-- 
+	HelloController controller = new HelloController();
+    controller.setHelloService(helloService); 
+-->
+ <!--     <bean id="helloController" class="com.kosa.myapp.HelloController"> 
+      <constructor-arg name="helloService" ref="helloService"></constructor-arg> -->
+      <!-- constructor-arg태그는 생성자가 있을때 -->
+      
+      	<!-- <property name="helloService" ref="helloService"></property>--> 
+      	<!-- helloController의 변수이름(속성)과 미리 만들어진 객체(8라인)를 참조 -->
+      	<!--  property 태그를 이용하려면 controller의  set메서드와 기본생성자가 있어야 한다--> 
+   <!--     </bean> -->
+      
+      <context:component-scan base-package="com.kosa.myapp"/>
+      
+      
+      <aop:config>
+      	<aop:pointcut expression="execution(* com..HelloService.sayHello(..))" id="hello"/>
+      	<aop:aspect ref="helloLog">
+      		<aop:before pointcut-ref="hello" method="log"/>
+      		<aop:after-returning pointcut-ref="hello" method="resultLog" returning="result"/>
+      	</aop:aspect>
+      	<aop:aspect ref="performanceAspect">
+      		<aop:around pointcut-ref="hello" method="trace"/>
+      	</aop:aspect>
+      </aop:config>
+      
+      
+      
+      <bean id="personBean" class="com.kosa.myapp.Person">
+      	<property name="name" value="youngseo"/>
+      	<property name="age" value="25"/>
+      </bean>
+      
+      <bean id="customer" class="com.kosa.myapp.Customer">
+      	<property name="lists">
+      		<list>
+      			<value>1</value>
+      			<ref bean="personBean"/>
+      			<bean class="com.kosa.myapp.Person">
+      				<property name="name" value="seokmin"/>
+      				<property name="age" value="26"/> 
+      			</bean>
+      		</list>
+      	</property>
+      	
+      	<property name="sets">
+      		<set>
+      			<value>2</value>
+      			<ref bean="personBean"/>
+      			<bean class="com.kosa.myapp.Person">
+      				<property name="name" value="mingkyu"/>
+      				<property name="age" value="26"/>
+      			</bean>
+      		</set>
+      	</property>
+      	
+      	<property name="maps">
+      		<map>
+      			<entry key="Key1" value="3"/>
+      			<entry key="Key2" value-ref="personBean"/>
+      			<entry key="Key3">
+      				<bean class="com.kosa.myapp.Person">
+      					<property name="name" value="minghao"/>
+      					<property name="age" value="26"/>
+      				</bean>
+      			</entry>
+      		</map>
+      	</property>
+      	
+      	<property name="props">
+      		<props>
+      			<prop key="webmaster">webmaster@coderby.com</prop>
+      			<prop key="support">support@coderby.com</prop>
+      		</props>
+      	</property>
+      </bean>
+</beans>
